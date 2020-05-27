@@ -16,17 +16,18 @@ export const DeploymentItem = ({ deployment, onRemoveClick }: IDeploymentItemPro
   const totalCountdown = useRef<number>(countdownMs);
 
   useEffect(() => {
-    if (totalCountdown.current === 0) return () => {};
+    if (totalCountdown.current <= 0) return () => {};
 
     const intervalMs = 10;
-
     const interval = setInterval(() => {
       dispatch(decrementCountdown(_id, intervalMs));
     }, intervalMs);
 
+    // Give to interval extra time to live to be sure that it finishes
+    const clearIntervalAfter = totalCountdown.current + 100;
     const timeout = setTimeout(() => {
       clearInterval(interval);
-    }, totalCountdown.current * 1000);
+    }, clearIntervalAfter);
 
     return () => {
       clearInterval(interval);
